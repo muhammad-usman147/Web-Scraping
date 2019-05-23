@@ -1,15 +1,19 @@
 import scrapy
-class SpiderQuotes(scrapy.Spider):
-    name='usman-quote'
+from ..items import FirstspiderItem
+class SpiderCrawler(scrapy.Spider):
+    name='quotes'
     start_urls=[
-        'http://quotes.toscrape.com'
+        'https://quotes.toscrape.com/'
     ]
-
     def parse(self,response):
-        all_div=response.css('div.quote')
-        for all_div in all_div:
+        all_div_quotes=response.css('div.quote')
+        item=FirstspiderItem()
+        for all_div_quotes in all_div_quotes:
 
-            bod=all_div.css('span.text::text').extract()
-            tit=all_div.css('.tag::text').extract()
-            author= all_div.css('.author::text').extract()
-            yield {'body':bod,'tags':tit,'author':author}
+            title=all_div_quotes.css('span.text::text').extract()
+            author=all_div_quotes.css('.author::text').extract()
+            tags=all_div_quotes.css('.tag::text').extract()
+            item['item_title']=title
+            item['item_author']=author
+            item['item_tags']=tags
+            yield item
